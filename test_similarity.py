@@ -8,34 +8,22 @@ from model import TextureEncoder
 
 
 def main():
-    # -------------------------------
-    # CONFIG
-    # -------------------------------
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
     TRAIN_PATH = r"C:\Users\prana\Desktop\ISRO IRoc\CV_Final_Dataset\split\train"
     TEST_PATH  = r"C:\Users\prana\Desktop\ISRO IRoc\CV_Final_Dataset\split\test"
 
-    MODEL_PATH = "supcon_encoder_final.pth"   # 🔥 FINAL MODEL
+    MODEL_PATH = "supcon_encoder_final.pth"   
 
-    # -------------------------------
-    # LOAD MODEL
-    # -------------------------------
     model = TextureEncoder(embedding_dim=256).to(DEVICE)
     model.load_state_dict(torch.load(MODEL_PATH, map_location=DEVICE))
     model.eval()
 
-    # -------------------------------
-    # TRANSFORMS (NO AUGMENTATION!)
-    # -------------------------------
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor()
     ])
 
-    # -------------------------------
-    # DATASETS
-    # -------------------------------
     train_dataset = TextureDataset(TRAIN_PATH, transform)
     test_dataset  = TextureDataset(TEST_PATH, transform)
 
@@ -53,9 +41,6 @@ def main():
         num_workers=0
     )
 
-    # -------------------------------
-    # EXTRACT TRAIN EMBEDDINGS
-    # -------------------------------
     train_embeddings = []
     train_labels = []
 
@@ -70,9 +55,6 @@ def main():
     train_embeddings = torch.cat(train_embeddings)
     train_labels = torch.cat(train_labels)
 
-    # -------------------------------
-    # TEST SIMILARITY (UNSEEN DATA)
-    # -------------------------------
     same_class_sims = []
     diff_class_sims = []
 
@@ -94,9 +76,7 @@ def main():
             same_class_sims.append(same.mean().item())
             diff_class_sims.append(diff.mean().item())
 
-    # -------------------------------
-    # RESULTS
-    # -------------------------------
+
     avg_same = sum(same_class_sims) / len(same_class_sims)
     avg_diff = sum(diff_class_sims) / len(diff_class_sims)
 

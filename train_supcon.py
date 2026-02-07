@@ -9,26 +9,17 @@ from model import TextureEncoder
 
 
 def main():
-    # -------------------------------
-    # CONFIG (TARGET SETUP)
-    # -------------------------------
     DATASET_PATH = r"C:\Users\prana\Desktop\ISRO IRoc\CV_Final_Dataset\split\train"
     DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 
-    # 🔥 Strong negative pressure
     N_CLASSES = 20
     N_SAMPLES = 4
 
-    # 🔥 Sharper separation
     TEMPERATURE = 0.07
 
-    # 🔥 Final training
     EPOCHS = 10
     LR = 1e-4
 
-    # -------------------------------
-    # DATASET + SAMPLER
-    # -------------------------------
     transform = transforms.Compose([
         transforms.RandomResizedCrop(224, scale=(0.7, 1.0)),
         transforms.RandomHorizontalFlip(),
@@ -50,16 +41,13 @@ def main():
     loader = DataLoader(
         dataset,
         batch_sampler=sampler,
-        num_workers=0,      # Windows-safe
+        num_workers=0,      
         pin_memory=False
     )
 
-    # -------------------------------
-    # MODEL, LOSS, OPTIMIZER
-    # -------------------------------
+
     model = TextureEncoder(embedding_dim=256).to(DEVICE)
 
-    # 🔓 UNFREEZE BACKBONE (CRITICAL)
     for param in model.backbone.parameters():
         param.requires_grad = True
 
@@ -70,9 +58,6 @@ def main():
         lr=LR
     )
 
-    # -------------------------------
-    # TRAINING LOOP
-    # -------------------------------
     model.train()
 
     for epoch in range(EPOCHS):
@@ -94,9 +79,6 @@ def main():
         avg_loss = running_loss / len(loader)
         print(f"Epoch [{epoch+1}/{EPOCHS}]  Loss: {avg_loss:.4f}")
 
-    # -------------------------------
-    # SAVE MODEL
-    # -------------------------------
     torch.save(model.state_dict(), "supcon_encoder_final.pth")
     print("Training finished, Model saved as supcon_encoder_final.pth")
 

@@ -33,9 +33,6 @@ class TextureDataset(Dataset):
         return image, label
 
 
-# -------------------------------------------------
-# MAIN (testing + label extraction)
-# -------------------------------------------------
 if __name__ == "__main__":
 
     transform = transforms.Compose([
@@ -54,7 +51,6 @@ if __name__ == "__main__":
     print("Image shape:", img.shape)
     print("Label:", label)
 
-    # ✅ ADD THIS LINE HERE
     labels = [label for _, label in dataset.samples]
 
     print("Total labels:", len(labels))

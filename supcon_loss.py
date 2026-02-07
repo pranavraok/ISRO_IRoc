@@ -19,10 +19,8 @@ class SupConLoss(nn.Module):
         labels = labels.contiguous().view(-1, 1)
         mask = torch.eq(labels, labels.T).float().to(device)
 
-        # cosine similarity matrix
         sim = torch.matmul(features, features.T) / self.temperature
 
-        # remove self-similarity
         logits_mask = torch.ones_like(mask) - torch.eye(batch_size).to(device)
         mask = mask * logits_mask
 

@@ -7,7 +7,7 @@ class TextureEncoder(nn.Module):
         super().__init__()
 
         backbone = models.resnet50(pretrained=True)
-        backbone.fc = nn.Identity()   # remove classifier
+        backbone.fc = nn.Identity()   
         self.backbone = backbone
 
         self.embedding = nn.Linear(2048, embedding_dim)
@@ -15,5 +15,5 @@ class TextureEncoder(nn.Module):
     def forward(self, x):
         features = self.backbone(x)
         z = self.embedding(features)
-        z = F.normalize(z, dim=1)     # L2 normalization
+        z = F.normalize(z, dim=1)     
         return z
